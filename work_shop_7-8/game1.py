@@ -1,4 +1,5 @@
 import pgzrun
+import random
 
 # Game variables
 game_paused = False
@@ -6,8 +7,10 @@ game_over = False
 score = 0
 obstacles = []
 obstacle_timeout = 0
-OBSTACLE_SPAWN_TIME = 100  # Adjusted constant for obstacle spawning
-
+# OBSTACLE_SPAWN_TIME = 100  # Adjusted constant for obstacle spawning
+OBSTACLE_SPAWN_MIN = 25  # Minimum time for spawning obstacles
+OBSTACLE_SPAWN_MAX = 75  # Maximum time for spawning obstacles
+OBSTACLE_SPAWN_TIME = random.randint(OBSTACLE_SPAWN_MIN, OBSTACLE_SPAWN_MAX)  # Initial random spawn time
 # Player character setup
 p3 = Actor('p3_stand')
 p3.images = ['p3_walk01', 'p3_walk02', 'p3_walk03', 'p3_walk04', 'p3_walk05', 'p3_walk06', 'p3_walk07', 'p3_walk08', 'p3_walk09', 'p3_walk10']
@@ -29,8 +32,8 @@ def draw():
 
     if game_over:
         # Display game over message and score
-        screen.draw.text("Game Over!", center=(400, 270), color="white", fontsize=60)
-        screen.draw.text(f"Score: {score}", center=(400, 330), color="white", fontsize=60)
+        screen.draw.text("Game Over!", center=(400, 270), color="red", fontsize=60)
+        screen.draw.text(f"Score: {score}", center=(400, 330), color="white", fontsize=40)
     else:
         # Draw all active obstacles
         for actor in obstacles:
@@ -40,7 +43,7 @@ def draw():
     screen.draw.text(f"Score: {score}", (20, 20), color="black", fontsize=36)
 
 def update():
-    global score, game_paused, game_over, obstacle_timeout
+    global score, game_paused, game_over, obstacle_timeout, OBSTACLE_SPAWN_TIME
 
     # Don't update game if paused or over
     if game_paused or game_over:
@@ -69,6 +72,7 @@ def update():
         new_obstacle.pos = (850, 400)
         obstacles.append(new_obstacle)
         obstacle_timeout = 0
+        OBSTACLE_SPAWN_TIME = random.randint(OBSTACLE_SPAWN_MIN, OBSTACLE_SPAWN_MAX)  # Set a new random interval
         
 
     # Update and check collisions for obstacles
